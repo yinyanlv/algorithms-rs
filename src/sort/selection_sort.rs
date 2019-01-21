@@ -12,7 +12,7 @@ pub fn selection_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
         }
 
         temp = arr[min_index];
-        arp[min_index] = arr[i];
+        arr[min_index] = arr[i];
         arr[i] = temp;
     }
 
@@ -24,6 +24,7 @@ fn test_selection_sort() {
     let mut a = vec![3, 2, 4, 3, 1];
 
     let b = selection_sort(&mut a);
+
 
     assert_eq!(b[0], 1);
 }
