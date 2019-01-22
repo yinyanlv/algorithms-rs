@@ -1,8 +1,8 @@
+use super::super::util::swap;
+
 pub fn shell_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
     let len = arr.len();
     let mut gap = 1;
-
-    let mut temp;
 
     while gap < (len / 3) {
         gap = gap * 3 + 1;
@@ -13,10 +13,7 @@ pub fn shell_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
             let mut j = i + gap;
 
             while (j >= gap) && (arr[j] < arr[j - gap]) {
-                temp = arr[j];
-                arr[j] = arr[j - gap];
-                arr[j - gap] = temp;
-
+                swap(arr, j - gap, j);
                 j -= gap;
             }
         }

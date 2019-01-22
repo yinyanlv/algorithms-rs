@@ -1,15 +1,14 @@
+use super::super::util::swap;
+
 pub fn insertion_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
     let len = arr.len();
-    let mut temp;
 
     for i in 0..(len - 1) {
 
         let mut j = i + 1;
 
         while j >= 1 && (arr[j] < arr[j - 1]) {
-            temp = arr[j];
-            arr[j] = arr[j - 1];
-            arr[j - 1] = temp;
+            swap(arr, j - 1, j);
 
             j -= 1;
         }

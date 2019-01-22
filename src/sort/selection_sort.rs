@@ -1,7 +1,8 @@
+use super::super::util::swap;
+
 pub fn selection_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
     let len = arr.len();
     let mut min_index;
-    let mut temp;
 
     for i in 0..(len - 1) {
         min_index = i;
@@ -11,9 +12,7 @@ pub fn selection_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
             }
         }
 
-        temp = arr[min_index];
-        arr[min_index] = arr[i];
-        arr[i] = temp;
+        swap(arr, i, min_index);
     }
 
     return arr;
