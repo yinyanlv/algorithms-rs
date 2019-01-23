@@ -1,2 +1,2 @@
-### algorithms-rs
+## algorithms-rs
 algorithms in rust
