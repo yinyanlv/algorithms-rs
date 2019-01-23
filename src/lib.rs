@@ -1,3 +1,3 @@
 pub mod util;
 pub mod sort;
-pub mod basic;
+pub mod collection;
