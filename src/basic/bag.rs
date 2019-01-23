@@ -1,38 +1,41 @@
-pub struct Node<T> {
+use std::rc::Rc;
+
+#[allow(dead_code)]
+struct Node<T> {
     item: T,
-    next: Box<Option<Node<T>>>,
+    next: Rc<Option<Node<T>>>,
 }
 
 pub struct Bag<T> {
-    first: Box<Option<Node<T>>>,
+    first: Rc<Option<Node<T>>>,
     size: u64,
 }
 
 impl<T> Bag<T> {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Bag {
-            first: Box::new(None),
+            first: Rc::new(None),
             size: 0,
         }
     }
 
-    fn size(&self) -> u64 {
+    pub fn size(&self) -> u64 {
         self.size
     }
 
-    fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.size == 0
     }
 
-    fn add(&mut self, item: T) {
-        let old_first = self.first;
+    pub fn add(&mut self, item: T) {
+        let old_first = self.first.clone();
 
         let node = Node {
             item,
-            next: Box::new(None)
+            next: old_first,
         };
 
-        self.first = Box::new(Some(node));
+        self.first = Rc::new(Some(node));
         self.size += 1;
     }
 }
@@ -42,7 +45,9 @@ fn test_bag() {
     let mut bag = Bag::new();
 
     bag.add(0);
+    bag.add(1);
+    bag.add(2);
 
-    assert_eq!(bag.size(), 1);
+    assert_eq!(bag.size(), 3);
     assert_eq!(bag.is_empty(), false);
 }
