@@ -1,2 +1,2 @@
 ## algorithms-rs
-algorithms in rust
+algorithms write in rust
