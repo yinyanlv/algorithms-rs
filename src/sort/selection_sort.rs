@@ -1,6 +1,4 @@
-use super::super::util::swap;
-
-pub fn selection_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
+pub fn selection_sort<T: PartialOrd + Copy>(arr: &mut [T]) -> &mut [T] {
     let len = arr.len();
     let mut min_index;
 
@@ -12,7 +10,7 @@ pub fn selection_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
             }
         }
 
-        swap(arr, i, min_index);
+        arr.swap(i, min_index);
     }
 
     return arr;
@@ -20,10 +18,9 @@ pub fn selection_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
 
 #[test]
 fn test_selection_sort() {
-    let mut a = vec![3, 2, 4, 3, 1];
+    let mut a = [3, 2, 4, -3, 1];
 
     let b = selection_sort(&mut a);
 
-
-    assert_eq!(b[0], 1);
+    assert_eq!(b, [-3, 1, 2, 3, 4]);
 }

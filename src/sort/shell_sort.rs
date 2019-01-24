@@ -1,6 +1,4 @@
-use super::super::util::swap;
-
-pub fn shell_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
+pub fn shell_sort<T: PartialOrd + Copy>(arr: &mut [T]) -> &mut [T] {
     let len = arr.len();
     let mut gap = 1;
 
@@ -13,7 +11,7 @@ pub fn shell_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
             let mut j = i + gap;
 
             while (j >= gap) && (arr[j] < arr[j - gap]) {
-                swap(arr, j - gap, j);
+                arr.swap(j - gap, j);
                 j -= gap;
             }
         }
@@ -26,9 +24,9 @@ pub fn shell_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
 
 #[test]
 fn test_shell_sort() {
-    let mut a = vec![3, 2, 4, 3, 1];
+    let mut a = [3, 2, 4, -3, 1];
 
     let b = shell_sort(&mut a);
 
-    assert_eq!(b[0], 1);
+    assert_eq!(b, [-3, 1, 2, 3, 4]);
 }

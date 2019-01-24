@@ -1,4 +1,4 @@
-pub fn swap(arr: &mut Vec<i32>, i: usize, j: usize) -> &mut Vec<i32> {
+pub fn swap<T: PartialOrd + Copy>(arr: &mut [T], i: usize, j: usize) -> &mut [T] {
     let temp;
 
     temp = arr[i];
@@ -6,15 +6,4 @@ pub fn swap(arr: &mut Vec<i32>, i: usize, j: usize) -> &mut Vec<i32> {
     arr[j] = temp;
 
     return arr;
-}
-
-pub fn clone_slice_into_vec<T: Copy>(arr: &[T]) -> Vec<T> {
-    let mut result = vec![];
-    let len = arr.len();
-
-    for i in 0..len {
-        result.push(arr[i]);
-    }
-
-    return result;
 }

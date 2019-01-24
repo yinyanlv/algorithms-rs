@@ -1,6 +1,4 @@
-use super::super::util::swap;
-
-pub fn heap_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
+pub fn heap_sort<T: PartialOrd + Copy>(arr: &mut [T]) -> &mut [T] {
     let len = arr.len();
 
     if len <= 1 {
@@ -10,7 +8,6 @@ pub fn heap_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
     let mut i = len / 2 - 1;
 
     while i >= (0 as usize) {
-
         shift_down(arr, i, len);
 
         if i == 0 {
@@ -23,7 +20,7 @@ pub fn heap_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
     let mut j = len - 1;
 
     while j > (0 as usize) {
-        swap(arr, 0, j);
+        arr.swap(0, j);
         shift_down(arr, 0, j);
 
         j -= 1;
@@ -33,7 +30,7 @@ pub fn heap_sort(arr: &mut Vec<i32>) -> &mut Vec<i32> {
 }
 
 /// 大顶堆
-fn shift_down(arr: &mut Vec<i32>, mut index: usize, count: usize) {
+fn shift_down<T: PartialOrd + Copy>(arr: &mut [T], mut index: usize, count: usize) {
     let mut next = 2 * index + 1;
 
     while next < count {
@@ -45,7 +42,7 @@ fn shift_down(arr: &mut Vec<i32>, mut index: usize, count: usize) {
             break;
         }
 
-        swap(arr, index, next);
+        arr.swap(index, next);
 
         index = next;
         next = 2 * index + 1;
@@ -54,9 +51,9 @@ fn shift_down(arr: &mut Vec<i32>, mut index: usize, count: usize) {
 
 #[test]
 fn test_heap_sort() {
-    let mut a = vec![3, 2, 4, 3, 1];
+    let mut a = [3, 2, 4, -3, 1];
 
     let b = heap_sort(&mut a);
 
-    assert_eq!(b[0], 1);
+    assert_eq!(b, [-3, 1, 2, 3, 4]);
 }
