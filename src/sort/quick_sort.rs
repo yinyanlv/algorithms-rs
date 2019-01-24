@@ -1,4 +1,15 @@
-pub fn quick_sort<T: PartialOrd + Copy>(arr: &mut [T], left: usize, right: usize) -> &mut [T] {
+pub fn quick_sort<T: PartialOrd + Copy>(arr: &mut [T]) -> &mut [T] {
+
+    let len = arr.len();
+
+    if len <= 1 {
+        return arr;
+    }
+
+    return sort(arr, 0, len - 1);
+}
+
+fn sort<T: PartialOrd + Copy>(arr: &mut [T], left: usize, right: usize) -> &mut [T] {
     let len = arr.len();
 
     if len <= 1 {
@@ -14,9 +25,9 @@ pub fn quick_sort<T: PartialOrd + Copy>(arr: &mut [T], left: usize, right: usize
             let partition_index = partition(arr, left, right);
 
             if partition_index > 0 {
-                quick_sort(arr, left, partition_index - 1);
+                sort(arr, left, partition_index - 1);
             }
-            quick_sort(arr, partition_index + 1, right);
+            sort(arr, partition_index + 1, right);
         }
     }
 
@@ -43,12 +54,47 @@ fn partition<T: PartialOrd + Copy>(arr: &mut [T], left: usize, right: usize) -> 
     return next - 1;
 }
 
-#[test]
-fn test_quick_sort() {
-    let mut a = [3, 2, 4, -3, 1];
-    let len = a.len();
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let b = quick_sort(&mut a, 0, len - 1);
+    /// 测试空数组
+    #[test]
+    fn test_empty_array() {
+        let mut a: Vec<i32> = vec![];
 
-    assert_eq!(b, [-3, 1, 2, 3, 4]);
+        let b = quick_sort(&mut a);
+
+        assert_eq!(b, []);
+    }
+
+    /// 测试数组中包含奇数个成员
+    #[test]
+    fn test_odd_array() {
+        let mut a = [3, 2, 4, -3, 1];
+
+        let b = quick_sort(&mut a);
+
+        assert_eq!(b, [-3, 1, 2, 3, 4]);
+    }
+
+    /// 测试数组中包含偶数个成员
+    #[test]
+    fn test_even_array() {
+        let mut a = [-3, -4, 2, 1];
+
+        let b = quick_sort(&mut a);
+
+        assert_eq!(b, [-4, -3, 1, 2]);
+    }
+
+    #[bench]
+    fn bench_quick_sort(b: &mut test::Bencher) {
+        b.iter(|| {
+            let mut arr: Vec<u32> = (0..1000).rev().collect();
+
+            quick_sort(&mut arr);
+        });
+    }
 }
+
