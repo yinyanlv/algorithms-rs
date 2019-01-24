@@ -1,20 +1,28 @@
 use std::rc::Rc;
 
-#[allow(dead_code)]
 struct Node<T: Clone> {
     item: T,
-    next: Rc<Option<Node<T>>>,
+    next: Option<Rc<Node<T>>>,
+}
+
+impl<T: Clone> Node<T> {
+    pub fn get_next(&self) -> Option<Rc<Node<T>>> {
+        match &self.next {
+            Some(next_node) => Some(next_node.clone()),
+            None => None
+        }
+    }
 }
 
 pub struct Bag<T: Clone> {
-    first: Rc<Option<Node<T>>>,
+    first: Option<Rc<Node<T>>>,
     size: u64,
 }
 
 impl<T: Clone> Bag<T> {
     pub fn new() -> Self {
         Bag {
-            first: Rc::new(None),
+            first: None,
             size: 0,
         }
     }
@@ -28,21 +36,33 @@ impl<T: Clone> Bag<T> {
     }
 
     pub fn add(&mut self, item: T) {
-        let old_first = self.first.clone();
+        match &mut self.first {
+            Some(old_first) => {
+                let node = Node {
+                    item,
+                    next: Some(old_first.clone()),
+                };
 
-        let node = Node {
-            item,
-            next: old_first,
+                self.first = Some(Rc::new(node));
+            }
+            None => {
+                let node = Node {
+                    item,
+                    next: None,
+                };
+
+                self.first = Some(Rc::new(node));
+            }
         };
 
-        self.first = Rc::new(Some(node));
         self.size += 1;
     }
 }
 
+#[allow(dead_code)]
 pub struct BagIntoIterator<T: Clone> {
     bag: Bag<T>,
-    cursor: Rc<Option<Node<T>>>,
+    cursor: Option<Rc<Node<T>>>,
 }
 
 impl<T: Clone> IntoIterator for Bag<T> {
@@ -50,8 +70,19 @@ impl<T: Clone> IntoIterator for Bag<T> {
     type IntoIter = BagIntoIterator<T>;
 
     fn into_iter(self) -> Self::IntoIter {
+        let cursor;
+
+        match &self.first {
+            Some(old_first) => {
+                cursor = Some(old_first.clone());
+            }
+            None => {
+                cursor = None;
+            }
+        };
+
         BagIntoIterator {
-            cursor: self.first.clone(),
+            cursor,
             bag: self,
         }
     }
@@ -61,22 +92,15 @@ impl<T: Clone> Iterator for BagIntoIterator<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
+        match &mut self.cursor {
+            Some(_) => {
+                let node = self.cursor.clone().unwrap();
 
-        if Rc::get_mut(&mut self.cursor).is_none() {
-            return None;
-        }
+                self.cursor = node.get_next();
 
-        let node_wrap = Rc::get_mut(&mut self.cursor).unwrap();
-        match node_wrap {
-            Some(node) => {
-                let temp;
-                {
-                    temp = node.item.clone();
-                }
-                self.cursor = node.next.clone();
-                Some(temp)
+                Some(node.item.clone())
             }
-            None => None
+            None => None,
         }
     }
 }
@@ -84,16 +108,18 @@ impl<T: Clone> Iterator for BagIntoIterator<T> {
 #[test]
 fn test_bag() {
     let mut bag = Bag::new();
+    let mut count = 0;
 
     bag.add(0);
     bag.add(1);
     bag.add(2);
 
-    for item in bag {
-        println!("{}", "*****");
-        println!("{}", item);
+    assert_eq!(bag.size(), 3);
+    assert_eq!(bag.is_empty(), false);
+
+    for _ in bag {
+        count += 1;
     }
 
-//    assert_eq!(bag.size(), 3);
-//    assert_eq!(bag.is_empty(), false);
+    assert_eq!(count, 3);
 }
