@@ -54,6 +54,7 @@ fn partition<T: PartialOrd + Copy>(arr: &mut [T], left: usize, right: usize) -> 
     return next - 1;
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
