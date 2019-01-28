@@ -105,21 +105,27 @@ impl<T: Clone> Iterator for BagIntoIterator<T> {
     }
 }
 
-#[test]
-fn test_bag() {
-    let mut bag = Bag::new();
-    let mut count = 0;
 
-    bag.add(0);
-    bag.add(1);
-    bag.add(2);
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    assert_eq!(bag.size(), 3);
-    assert_eq!(bag.is_empty(), false);
+    #[test]
+    fn test_bag() {
+        let mut bag = Bag::new();
+        let mut count = 0;
 
-    for _ in bag {
-        count += 1;
+        bag.add(0);
+        bag.add(1);
+        bag.add(2);
+
+        assert_eq!(bag.size(), 3);
+        assert_eq!(bag.is_empty(), false);
+
+        for _ in bag {
+            count += 1;
+        }
+
+        assert_eq!(count, 3);
     }
-
-    assert_eq!(count, 3);
 }
