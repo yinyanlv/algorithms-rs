@@ -1,12 +1,12 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 
-struct Node<T> {
+struct Node<T: Clone> {
     item: T,
     next: Option<Rc<RefCell<Node<T>>>>,
 }
 
-impl<T> Node<T> {
+impl<T: Clone> Node<T> {
     pub fn get_next(&self) -> Option<Rc<RefCell<Node<T>>>> {
 
         match &self.next {
@@ -32,12 +32,12 @@ impl<T> Node<T> {
     }
 }
 
-pub struct Queue<T> {
+pub struct Queue<T: Clone> {
     first: Option<Rc<RefCell<Node<T>>>>,
     size: u64,
 }
 
-impl<T> Queue<T> {
+impl<T: Clone> Queue<T> {
     pub fn new() -> Self {
         Queue {
             first: None,
@@ -71,9 +71,28 @@ impl<T> Queue<T> {
         self.size += 1;
     }
 
-    pub fn dequeue() -> Option<T> {
+    pub fn dequeue(&mut self) -> Option<T> {
 
-        None
+        if self.is_empty() {
+            return None;
+        }
+
+        let old_first = self.first.clone().unwrap();
+
+        let result = match &old_first.borrow().get_next() {
+            Some(node) => {
+                self.first = Some(node.clone());
+                Some(old_first.borrow().item.clone())
+            }
+            None => {
+                self.first = None;
+                Some(old_first.borrow().item.clone())
+            }
+        };
+
+        self.size -= 1;
+
+        return result;
     }
 
     pub fn size(&self) -> u64 {
@@ -88,8 +107,25 @@ impl<T> Queue<T> {
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
     fn test_queue() {
+        let mut queue = Queue::new();
 
+        queue.enqueue(1);
+        queue.enqueue(2);
+        queue.enqueue(3);
+        queue.enqueue(4);
+
+        assert_eq!(queue.size(), 4);
+
+        let item1 = queue.dequeue().unwrap();
+        let item2 = queue.dequeue().unwrap();
+
+        assert_eq!(item1, 1);
+        assert_eq!(item2, 2);
+        assert_eq!(queue.size(), 2);
     }
 }
