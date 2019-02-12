@@ -1,12 +1,13 @@
 use std::rc::Rc;
+use std::cell::RefCell;
 
 struct Node<T> {
     item: T,
-    next: Option<Rc<Node<T>>>,
+    next: Option<Rc<RefCell<Node<T>>>>,
 }
 
 impl<T> Node<T> {
-    pub fn get_next(&self) -> Option<Rc<Node<T>>> {
+    pub fn get_next(&self) -> Option<Rc<RefCell<Node<T>>>> {
 
         match &self.next {
             Some(next_node) => {
@@ -18,7 +19,7 @@ impl<T> Node<T> {
 
     pub fn set_next(&mut self, node: Node<T>) {
 
-        self.next = Some(Rc::new(node));
+        self.next = Some(Rc::new(RefCell::new(node)));
     }
 
     pub fn has_next(&self) -> bool {
@@ -32,7 +33,7 @@ impl<T> Node<T> {
 }
 
 pub struct Queue<T> {
-    first: Option<Rc<Node<T>>>,
+    first: Option<Rc<RefCell<Node<T>>>>,
     size: u64,
 }
 
@@ -53,17 +54,17 @@ impl<T> Queue<T> {
         match &mut self.first {
             Some(first_node) => {
 
-                let mut temp_node = first_node;
+                let mut temp_node = first_node.clone();
 
-                while temp_node.has_next() {
-                    temp_node = temp_node.get_next().unwrap();
+                while temp_node.borrow().has_next() {
+                    temp_node = temp_node.clone().borrow().get_next().unwrap();
                 }
 
-                temp_node.set_next(node);
+                temp_node.borrow_mut().set_next(node);
             }
             None => {
 
-                self.first = Some(Rc::new(node));
+                self.first = Some(Rc::new(RefCell::new(node)));
             }
         };
 
